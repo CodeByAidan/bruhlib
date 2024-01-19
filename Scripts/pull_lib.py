@@ -1,6 +1,12 @@
 import subprocess
+import os
 
 def update_repository(repo_path, branch='main'):
+    git_version_process = subprocess.run(['git', '--version'], capture_output=True, text=True)
+
+    if git_version_process.returncode != 0:
+        raise RuntimeError("Git is not installed! Please install git and try again.")
+
     subprocess.run(['git', '-C', repo_path, 'fetch'])
 
     local_commit = subprocess.run(['git', '-C', repo_path, 'rev-parse', f'{branch}'], capture_output=True, text=True).stdout.strip()
@@ -14,8 +20,5 @@ def update_repository(repo_path, branch='main'):
 
 
 if __name__ == '__main__':
-    import os
-    import sys
-
     repo_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     update_repository(repo_path)
